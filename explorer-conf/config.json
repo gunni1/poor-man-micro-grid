@@ -1,0 +1,6 @@
+{
+  "DEFAULT_INFLUX_SERVER": "http://host.docker.internal:8181",
+  "DEFAULT_INFLUX_DATABASE": "microgrid",
+  "DEFAULT_API_TOKEN": "",
+  "DEFAULT_SERVER_NAME": "influxdb3"
+}

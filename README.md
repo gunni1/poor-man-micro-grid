@@ -12,6 +12,10 @@ The Poor Man's Micro Grid is a bunch of software and infrastructure as code comp
 ## Assets
 Small independend software components which simulat an asset which produce or consume power in the grid. It sends telemetry data and have a interface to receive control commands to increase or decrease suppy/drain or, in case of a battery, switch modes.
 
+### Asset Types
+
+...
+
 ## Telemetry
 Telemetry components are responsible for collect, store and display telemetry data send by assets. There are stored as timeseries.
 
