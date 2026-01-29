@@ -46,6 +46,24 @@ services:
       - mosquitto
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+  pv-sim:
+    image: poor-man-micro-grid/asset-sim-pv:1.0
+    container_name: pv-sim
+    depends_on:
+      - mosquitto
+    environment:
+      - ASSET_ID=PV_1000
+      - P_NOMINAL_KW=1000
+      - MQTT_BROKER=tcp://mosquitto:1883
+  wind-sim:
+    image: poor-man-micro-grid/asset-sim-wind:1.0
+    container_name: wind-sim
+    depends_on:
+      - mosquitto
+    environment:
+      - ASSET_ID=WIND_2000
+      - P_NOMINAL_KW=2000
+      - MQTT_BROKER=tcp://mosquitto:1883
 
 volumes:
   influxdb-data:
