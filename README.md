@@ -3,7 +3,7 @@ This is a toy project to learn about technology and practice software developeme
 
 # Poor Man's Micro Grid
 
-The Poor Man's Micro Grid is a bunch of software and infrastructure as code components to simulate assets and management software for a small power grid. It operate of assert management level. There is no need for physics simulation and the choosen interfaces and protocols are close to industrial standards but sometimes abstract to focus on learning.
+The Poor Man's Micro Grid is a bunch of software and infrastructure as code components to simulate assets and management software for a small power grid. It operate of assert management level. There is no need for percise physic simulation and the choosen interfaces and protocols are close to industrial standards but sometimes abstract in sake of learning. Even if there is a lot of simulation, the system is ment to focus on real time control of a smart grid.
 
 # Components
 
@@ -14,7 +14,10 @@ Small independend software components which simulat an asset which produce or co
 
 ### Asset Types
 
-...
+- PV
+- Wind
+- Load
+- BESS
 
 ## Telemetry
 Telemetry components are responsible for collect, store and display telemetry data send by assets. There are stored as timeseries.
@@ -24,3 +27,5 @@ The control plain read telemetry data of the grid to
 - evaluate the state of the grid
 - make decisions 
 - send/write control commands
+
+The goal ist to implement a simple Energy Management System (EMS) to act on telemetry data and take decisions to stable the grid

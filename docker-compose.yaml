@@ -37,7 +37,6 @@ services:
       - "1883:1883"
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
-
   telegraf:
     image: telegraf:1.37
     container_name: telegraf
@@ -64,6 +63,15 @@ services:
       - ASSET_ID=WIND_2000
       - P_NOMINAL_KW=2000
       - MQTT_BROKER=tcp://mosquitto:1883
-
+  load-sim:
+    image: poor-man-micro-grid/asset-sim-load:1.0
+    container_name: load-sim
+    depends_on:
+      - mosquitto
+    environment:
+      - ASSET_ID=LOAD_2000
+      - BASE_LOAD=500
+      - PEAK_LOAD=1500
+      - MQTT_BROKER=tcp://mosquitto:1883
 volumes:
   influxdb-data:
