@@ -1,0 +1,374 @@
+{
+  "__inputs": [],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "11.0.0" },
+    { "type": "datasource", "id": "influxdb", "name": "InfluxDB", "version": "1.0.0" },
+    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" },
+    { "type": "panel", "id": "stat", "name": "Stat", "version": "" }
+  ],
+  "annotations": { "list": [] },
+  "description": "Live telemetry from micro-grid asset simulators. Auto-refreshes every 5 s.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 10,
+      "title": "Current Power (kW)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "orange", "value": 800 }
+            ]
+          },
+          "unit": "kwatt",
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 1 },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT last(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'pv' AND $timeFilter GROUP BY \"asset_id\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "PV Output",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "light-blue", "value": 1000 },
+              { "color": "super-light-blue", "value": 1800 }
+            ]
+          },
+          "unit": "kwatt",
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 1 },
+      "id": 12,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT last(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'wind' AND $timeFilter GROUP BY \"asset_id\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Wind Output",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 800 },
+              { "color": "yellow", "value": 1200 }
+            ]
+          },
+          "unit": "kwatt",
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+      "id": 13,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT last(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'load' AND $timeFilter GROUP BY \"asset_id\"",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Load Consumption",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 20,
+      "title": "Grid Overview — All Assets",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Power (kW)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "kwatt"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "pv" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2CC0C", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "wind" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "load" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F26B1F", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 6 },
+      "id": 21,
+      "options": {
+        "legend": { "calcs": ["last", "mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "alias": "pv",
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"pv\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'pv' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "PV",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "wind",
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"wind\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'wind' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "Wind",
+          "resultFormat": "time_series"
+        },
+        {
+          "alias": "load",
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"load\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'load' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "Load",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "PV / Wind / Load — last 10 minutes",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
+      "id": 30,
+      "title": "Individual Assets",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#F2CC0C", "mode": "fixed" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisLabel": "Power (kW)",
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "kwatt",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 17 },
+      "id": 31,
+      "options": {
+        "legend": { "calcs": ["last", "mean", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'pv' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "PV (Solar)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#5794F2", "mode": "fixed" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisLabel": "Power (kW)",
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "kwatt",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 17 },
+      "id": 32,
+      "options": {
+        "legend": { "calcs": ["last", "mean", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'wind' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Wind Turbine",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "#F26B1F", "mode": "fixed" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisLabel": "Power (kW)",
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "kwatt",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 17 },
+      "id": 33,
+      "options": {
+        "legend": { "calcs": ["last", "mean", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb-microgrid" },
+          "query": "SELECT mean(\"p_kw\") AS \"p_kw\" FROM \"asset_telemetry\" WHERE \"asset_type\" = 'load' AND $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series"
+        }
+      ],
+      "title": "Load (Consumer)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["microgrid", "iot", "live"],
+  "time": { "from": "now-10m", "to": "now" },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m"],
+    "time_options": ["5m", "10m", "15m", "1h", "6h", "24h"]
+  },
+  "timezone": "browser",
+  "title": "Micro Grid — Live",
+  "uid": "microgrid-live",
+  "version": 1
+}

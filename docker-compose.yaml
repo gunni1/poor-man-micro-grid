@@ -73,5 +73,22 @@ services:
       - BASE_LOAD=500
       - PEAK_LOAD=1500
       - MQTT_BROKER=tcp://mosquitto:1883
+  grafana:
+    image: grafana/grafana-oss:11.6.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
 volumes:
   influxdb-data:
+  grafana-data:

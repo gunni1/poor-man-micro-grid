@@ -1,0 +1,21 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB-microgrid
+    type: influxdb
+    uid: influxdb-microgrid
+    access: proxy
+    # InfluxDB 3 Core — InfluxQL mode on port 8181.
+    # The built-in InfluxDB plugin's `token` field is only used in Flux mode.
+    # For InfluxQL mode we inject the Authorization header explicitly via
+    # httpHeaderName1 / httpHeaderValue1.
+    url: http://influxdb:8181
+    database: microgrid
+    jsonData:
+      version: InfluxQL
+      httpMode: GET
+      httpHeaderName1: Authorization
+    secureJsonData:
+      httpHeaderValue1: "Bearer apiv3_lWiIWkfBKGd2f1DYzPnOYttvq0L9uvEf0Z3y5pwxj2_OQHIAKH7rUc9LeFJ72qa60kifAale0mRwZrjEFCg2nQ"
+    isDefault: true
+    editable: false
