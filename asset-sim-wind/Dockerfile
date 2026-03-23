@@ -6,10 +6,11 @@ ENV GOARCH=arm64
 ENV CGO_ENABLED=0
 
 WORKDIR /app
-COPY go.mod .
-COPY main.go .
-RUN go mod tidy && go mod download
-RUN go build -o asset-sim-wind main.go
+COPY shared/ ./shared/
+COPY asset-sim-wind/ ./asset-sim-wind/
+WORKDIR /app/asset-sim-wind
+RUN go mod download
+RUN go build -o /app/asset-sim-wind .
 
 # Runtime
 FROM gcr.io/distroless/static-debian12

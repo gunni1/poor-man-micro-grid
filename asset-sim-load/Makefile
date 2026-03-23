@@ -1,2 +1,2 @@
 docker-build:
-	docker build -t poor-man-micro-grid/asset-sim-load:1.0 .
+	docker build -f Dockerfile -t poor-man-micro-grid/asset-sim-load:1.0 ..

@@ -7,6 +7,10 @@ require (
 	github.com/google/uuid v1.6.0
 )
 
+require poor-man-micro-grid/shared v0.0.0
+
+replace poor-man-micro-grid/shared => ../shared
+
 require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	golang.org/x/net v0.44.0 // indirect

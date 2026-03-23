@@ -1,0 +1,8 @@
+go 1.26.1
+
+use (
+	./asset-sim-load
+	./asset-sim-pv
+	./asset-sim-wind
+	./shared
+)

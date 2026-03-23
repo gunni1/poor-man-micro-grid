@@ -6,37 +6,23 @@ import (
 	"log"
 	"math"
 	"math/rand/v2"
-	"os"
-	"strconv"
 	"time"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"poor-man-micro-grid/shared"
+
 	"github.com/google/uuid"
 )
 
 const assetType = "pv"
 
-type Telemetry struct {
-	AssetId   string  `json:"asset_id"`
-	AssetType string  `json:"asset_type"`
-	PkW       float64 `json:"p_kw"`
-}
-
 func main() {
+	broker := shared.GetEnv("MQTT_BROKER", "tcp://localhost:1883")
+	assetId := shared.GetEnv("ASSET_ID", fmt.Sprintf("%s-%s", assetType, uuid.NewString()))
+	pNominalInKw := shared.GetEnvAsFloat("P_NOMINAL_KW")
 
-	broker := getEnv("MQTT_BROKER", "tcp://localhost:1883")
-	assetId := getEnv("ASSET_ID", fmt.Sprintf("%s-%s", assetType, uuid.NewString()))
-	pNominalInKw := getEnvAsFloat("P_NOMINAL_KW")
+	clientId := fmt.Sprintf("%s-%s", assetType, assetId)
 
-	// MQTT Setup
-	opts := mqtt.NewClientOptions().
-		AddBroker(broker).
-		SetClientID(fmt.Sprintf("%s-%s", assetType, assetId))
-
-	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatal(token.Error())
-	}
+	client := shared.Connect(broker, clientId)
 	defer client.Disconnect(250)
 
 	topic := fmt.Sprintf("microgrid/%s/%s/telemetry", assetType, assetId)
@@ -47,7 +33,7 @@ func main() {
 	for range ticker.C {
 		p := simPVPower(time.Now(), pNominalInKw)
 
-		msg := Telemetry{
+		msg := shared.Telemetry{
 			AssetId:   assetId,
 			AssetType: assetType,
 			PkW:       p,
@@ -74,29 +60,4 @@ func simPVPower(now time.Time, pNominal float64) float64 {
 	// Random cloud factor between 0.9 and 1.1
 	cloudFactor := 0.9 + rand.Float64()*0.2
 	return math.Max(0, p*cloudFactor)
-}
-
-func getEnv(key string, fallback string) string {
-	envValue, isPresent := os.LookupEnv(key)
-	if !isPresent {
-		return fallback
-	}
-	return envValue
-}
-
-func getEnvAsFloat(key string) float64 {
-	asStr := envMandatory(key)
-	val, err := strconv.ParseFloat(asStr, 64)
-	if err != nil {
-		log.Fatalf("Error parsing %s as float: %v", key, err)
-	}
-	return val
-}
-
-func envMandatory(key string) string {
-	envValue, isPresent := os.LookupEnv(key)
-	if !isPresent {
-		log.Fatalf("environment var %s is missing", key)
-	}
-	return envValue
 }

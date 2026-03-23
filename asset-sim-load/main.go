@@ -6,21 +6,13 @@ import (
 	"log"
 	"math"
 	"math/rand/v2"
-	"os"
-	"strconv"
 	"time"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
+	"poor-man-micro-grid.local/shared"
 )
 
 const assetType = "load"
-
-type Telemetry struct {
-	AssetId   string  `json:"asset_id"`
-	AssetType string  `json:"asset_type"`
-	PkW       float64 `json:"p_kw"`
-}
 
 type LoadModel struct {
 	P     float64 // aktuelle Leistung
@@ -31,10 +23,10 @@ type LoadModel struct {
 }
 
 func main() {
-	broker := getEnv("MQTT_BROKER", "tcp://localhost:1883")
-	assetId := getEnv("ASSET_ID", fmt.Sprintf("%s-%s", assetType, uuid.NewString()))
-	baseLoad := getEnvAsFloat("BASE_LOAD")
-	peakLoad := getEnvAsFloat("PEAK_LOAD")
+	broker := shared.GetEnv("MQTT_BROKER", "tcp://localhost:1883")
+	assetId := shared.GetEnv("ASSET_ID", fmt.Sprintf("%s-%s", assetType, uuid.NewString()))
+	baseLoad := shared.GetEnvAsFloat("BASE_LOAD")
+	peakLoad := shared.GetEnvAsFloat("PEAK_LOAD")
 
 	model := LoadModel{
 		P:     baseLoad + rand.NormFloat64()*50,
@@ -44,15 +36,9 @@ func main() {
 		Sigma: 20,
 	}
 
-	// MQTT Setup
-	opts := mqtt.NewClientOptions().
-		AddBroker(broker).
-		SetClientID(fmt.Sprintf("%s-%s", assetType, assetId))
+	clientId := fmt.Sprintf("%s-%s", assetType, assetId)
+	client := shared.Connect(broker, clientId)
 
-	client := mqtt.NewClient(opts)
-	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatal(token.Error())
-	}
 	defer client.Disconnect(250)
 
 	topic := fmt.Sprintf("microgrid/%s/%s/telemetry", assetType, assetId)
@@ -61,7 +47,7 @@ func main() {
 
 	for range ticker.C {
 		p := model.Step(time.Now())
-		telemetry := Telemetry{
+		telemetry := shared.Telemetry{
 			AssetId:   assetId,
 			AssetType: assetType,
 			PkW:       p,
@@ -95,29 +81,4 @@ func (model *LoadModel) Step(t time.Time) float64 {
 		model.P = 0
 	}
 	return model.P
-}
-
-func getEnvAsFloat(key string) float64 {
-	asStr := envMandatory(key)
-	val, err := strconv.ParseFloat(asStr, 64)
-	if err != nil {
-		log.Fatalf("Error parsing %s as float: %v", key, err)
-	}
-	return val
-}
-
-func envMandatory(key string) string {
-	envValue, isPresent := os.LookupEnv(key)
-	if !isPresent {
-		log.Fatalf("environment var %s is missing", key)
-	}
-	return envValue
-}
-
-func getEnv(key string, fallback string) string {
-	envValue, isPresent := os.LookupEnv(key)
-	if !isPresent {
-		return fallback
-	}
-	return envValue
 }

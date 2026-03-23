@@ -6,10 +6,11 @@ ENV GOARCH=arm64
 ENV CGO_ENABLED=0
 
 WORKDIR /app
-COPY go.mod .
-COPY main.go .
-RUN go mod tidy && go mod download
-RUN go build -o asset-sim-pv main.go
+COPY shared/ ./shared/
+COPY asset-sim-pv/ ./asset-sim-pv/
+WORKDIR /app/asset-sim-pv
+RUN go mod download
+RUN go build -o /app/asset-sim-pv .
 
 # Runtime
 FROM gcr.io/distroless/static-debian12
